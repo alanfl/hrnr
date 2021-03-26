@@ -129,9 +129,9 @@ int verify_debug = 0;
    */
 #define LOG_COMPRESS //log compress level 0
 //#define LOG_COMPRESS_1 //log compress level 1
-//#define X_COMPRESS  // note: x_compress should be defined at least along with log_compress level 0
+#define X_COMPRESS  // note: x_compress should be defined at least along with log_compress level 0
 #define USE_SYSNUM
-//#define REPLAY_PAUSE
+#define REPLAY_PAUSE
 #define DET_TIME_DEBUG 0
 #define DET_TIME_STAT 0
 //#define MULTI_GROUP
@@ -139,7 +139,7 @@ int verify_debug = 0;
 #define SYSCALL_CACHE_REP current->replay_thrd->rp_record_thread->rp_clog.syscall_cache
 #define X_STRUCT_REC current->record_thrd->rp_clog.x
 #define X_STRUCT_REP current->replay_thrd->rp_record_thread->rp_clog.x
-#define x_detail 0
+#define x_detail 1
 unsigned int x_proxy = 0;
 unsigned int record_x = 1;
 unsigned int replay_pause_tool = 0;
@@ -620,7 +620,7 @@ atomic_t vmalloc_cnt = ATOMIC_INIT(0);
 
 /* Variables configurable via /proc file system */
 unsigned int syslog_recs = 20000;
-unsigned int replay_debug = 0;
+unsigned int replay_debug = 1;
 unsigned int replay_min_debug = 0;
 unsigned long argsalloc_size = (512*1024);
 // If the replay clock is greater than this value, MPRINT out the syscalls made by pin
@@ -10216,6 +10216,7 @@ replay_socketcall (int call, unsigned long __user *args)
 							printk ("Pid %d tries too many times receiving x messages. sleep and try later.\n", current->pid);
 							msleep (200);
 						}
+						if (tries > 20) break;
 					}
 					if (record_x && rc > 0 && memcmp ((char*)(args[1]), &retvals->buf, rc)) {
 						int i = 0;
