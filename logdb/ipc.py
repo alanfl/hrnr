@@ -52,7 +52,7 @@ class IPCGraph(object):
 
     def output_graph(self):
         root_nodes = []
-        printed_nodes = {}
+        printed_nodes = {''}
 
         # find root node(s) aka nodes with in-degree 0
         for node in self.nodes:
@@ -67,6 +67,7 @@ class IPCGraph(object):
             if node in printed_nodes:
                 continue
             print(str(node))
+	    printed_nodes.add(node)
             for edge in node.edges:
                 queue.append(edge.from_node)
 

@@ -158,7 +158,7 @@ class Query(object):
         filenames_file = ''.join(["/tmp/", str(self.current_pid), "/filenames_", str(self.current_gid)])
         interpret_file = "/tmp/interpret_result"
         assert os.path.exists(interpret_tokens)
-        query_output = ''.join(["/tmp/", str(self.current_pid), "/", self.query_output])
+	query_output = ''.join(["/tmp/", str(self.current_pid), "/dataflow_", str(self.current_gid), ".result"])
         cmd = ' '.join([interpret_tokens, tokens_file, filenames_file, query_output, interpret_file])
         print(cmd)
 
