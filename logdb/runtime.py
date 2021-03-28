@@ -11,7 +11,7 @@ class RunTimeInfo(object):
             self.omniplay_location = omniplay_location
         else:
             home = os.path.expanduser("~")
-            self.omniplay_location = ''.join([home, "/omniplay"])
+            self.omniplay_location = ''.join([home, "/hrnr"])
 
         if pthread_lib:
             self.pthread = pthread_lib
