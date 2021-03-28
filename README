@@ -137,3 +137,55 @@ Replay previous recorded (it will NOT really rerun the program):
   cd $OMNIPLAY_DIR/test
   ./xrerun.sh 1
   Output should be: Goodby! Cruel lmap. This replay is over.
+  
+-----------------------------------------------------------------
+Install pin and build pin-tools
+-----------------------------------------------------------------
+Pin is used to instrument code in replay and generate linkage output, using self-defined linkage functions. Linkage function is kind of callback function that Pin will invoke to intercept each instruction.)
+
+Install Pin and pintool required libraries:
+  cd (go to user home dir)
+  cp $OMNIPLAY_DIR/pin-2.14-71313-gcc.4.4.7-linux.tar.gz .
+  tar -xzf pin-2.14-71313-gcc.4.4.7-linux.tar.gz
+  mv pin-2.14-71313-gcc.4.4.7-linux pin-2.13 (system default pin root, you can specify another one by setting pin_root)
+  cd $OMNIPLAY_DIR/pin_tools
+  sudo apt-get install libglib2.0-dev libssl-dev
+
+Build or rebuild pintools:
+  rm -rf obj-ia32 (rm previous build)
+  make PIN_ROOT=~/pin-2.13
+  ls obj-ia32 (make sure linkage_copy.so and linkage_data.so are there)
+
+Optional required if checked out latest from ddevec/omniplay:
+  *** Fix linkage.cpp and makefile.rules
+  nano linkage.cpp and search (ctrl+w set_pin_addr)
+  Add two lines of code:
+    int thread_ndx;
+    struct thread_data *current_thread;
+  Change one line:
+    set_pin_addr (dev_fd, (u_long) &(ptdata->app_syscall), ptdata, (void **) &current_thread, &thread_ndx);
+
+  *** fix makefile.rules (to build linkage_copy.so and linkage_data.so)
+    nano makefile.rules and add the following to TEST_TOOL_ROOTS variable: linkage_copy linkage_data
+
+-----------------------------------------------------------------
+Build logdb & install sqlite3
+-----------------------------------------------------------------
+
+logdb has python scripts that automate querying file changes. It replay processes and use pin tools for taint tracking.
+
+	cd $OMNIPLAY_DIR/logdb
+	sudo apt-get install python-dev sqlite3
+	cd ../python_environ/omniplay
+	make
+	sudo make install (install parseklograw package)
+
+Validate logdb and sqlite3
+
+	After record something
+	python fill_db.py -s 1 
+	sqlite3 /replay_logdb/replay.db
+	sqlite> .tables (see all tables)
+	sqlite> SELECT * FROM replays;
+	Ctrl + d (exit sqlite3) 
+
