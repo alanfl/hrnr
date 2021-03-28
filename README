@@ -60,16 +60,14 @@ Build linux kernel:
 
 Add the following to ~/.profile file:
 
-  export LIBPATH=/lib/i386-linux-gnu:/usr/lib/i386-linux-gnu:/usr/local/lib:/usr/lib:/lib
   export OMNIPLAY_DIR=~/hrnr
-  sudo -E $OMNIPLAY_DIR/scripts/insert_spec.sh
   cd $OMNIPLAY_DIR
 
 Note the original linux version then reboot with new kernel:
 
-  uname -r
+  uname -r (3.5.0-23-generic)
   reboot
 
 Note new linux kernel version:
 
-  uname -r
+  uname -r (3.5.7.13)
