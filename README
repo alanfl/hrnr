@@ -14,6 +14,7 @@ On Intel CPU PC, use VMWare Workstation Player to create a VM with 40G disk spac
 Login into VM and install ssh server, it will start ssh server after installation:
 
   sudo apt-get install openssh-server
+  sudo lsof -i -P -n | grep LISTEN (check if it is running)
 
 Find out VM’s IP address:
 
