@@ -229,4 +229,50 @@ Query file provenance:
 	} 
   open browser and go to https://dreampuf.github.io/GraphvizOnline/ (copy content of .dot file will get graph)
   
-  
+
+-----------------------------------------------------------------
+X-Proxy & Replay Pause (Human Replay)
+-----------------------------------------------------------------
+
+Build x-proxy:
+	sudo apt-get install liblzo2-dev libX11-dev
+	cd $OMNIPLAY_DIR/xproxy
+	make
+
+Start xproxy server (it serve as proxy to real xserver):
+	Open one ssh session (NOT GUI terminal since it will NOT run ~/.profile)
+	sudo nano /proc/sys/kernel/x_proxy and change to 1 (enable x proxy)
+	sudo nano /proc/sys/kernel/pause_tool and change to 1 (enable replay pause)
+	cd $OMNIPLAY_DIR/xproxy
+	./xproxy.sh (xproxy listen on :8.0, default xserver listen on :0.0)
+
+Record X-Window Applications (start in Ubuntu GUI)
+	Open one GUI terminal
+	source ~/.profile 
+	cd $OMNIPLAY_DIR/test
+	./xreset.sh
+	./xrun.sh “/usr/bin/xcalc”
+	Use mouse to input “2 + 3 =” then exit
+	Output should be: Record log saved to: /replay_logdb/rec_1
+
+Replay & Pause X-Window Applications (start in Ubuntu GUI)
+	Open another GUI terminal (must be a different one)
+	source ~/.profile 
+	cd $OMNIPLAY_DIR/test
+	./xrerun.sh 1 (find out its pid)
+
+Step through X-Window Applications (start in Ubuntu GUI)
+	Open 3rd GUI terminal (must be a different one)
+	source ~/.profile 
+	cd $OMNIPLAY_DIR/test
+	./replay_pause pid (pid is the resumed app’s pid)
+	s 1000 (set # of syscalls per next command)
+	n (run replay after 1000 syscalls) 
+
+Optional if ./xrun.sh “/usr/bin/firefox”
+	s 5000000 (5 million each step), 
+	n (Go to 5 millions steps, see browser come up)
+	n (Go to 10 millions steps, see cnn.com in url bar)
+	s 1000000 (1 million each step)
+	n (repeat to see page being rendered)
+
