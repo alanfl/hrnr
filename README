@@ -141,6 +141,7 @@ Replay previous recorded (it will NOT really rerun the program):
 -----------------------------------------------------------------
 Install pin and build pin-tools
 -----------------------------------------------------------------
+
 Pin is used to instrument code in replay and generate linkage output, using self-defined linkage functions. Linkage function is kind of callback function that Pin will invoke to intercept each instruction.)
 
 Install Pin and pintool required libraries:
@@ -189,3 +190,42 @@ Validate logdb and sqlite3
 	sqlite> SELECT * FROM replays;
 	Ctrl + d (exit sqlite3) 
 
+
+-----------------------------------------------------------------
+Demo & Validation
+-----------------------------------------------------------------
+
+Record userspace and kernel space non-deterministics:
+  From one terminal window
+  cd $OMNIPLAY_DIR/test
+  ./xreset.sh
+  ./xrun.sh “/bin/bash” (all commands in the shell will be recorded)
+  nano hello.txt
+  cp hello.txt h1.txt
+  cp h1.txt h2.txt
+  cp h2.txt h3.txt
+  exit
+  Output should be: Record log save to: /replay_logdb/rec-1
+
+Query file provenance:
+  Open another terminal (must be a different terminal window)
+  cd $OMNIPLAY_DIR/test
+  ./xquery.sh h3.txt
+  Output should be: Query took 146.136988 sec
+  {'read_infos': [], 'cmd': u'nano hello.txt', 'pid': 10533, 'edges': [<ipc.IPCEdge object at 0xb6de85ec>, <ipc.IPCEdge object at 0xb6de864c>], 'exec_infos': [], 'write_infos': [<opinfo.WriteInfo object at 0xb6de840c>, <opinfo.WriteInfo object at 0xb6de836c>], 'edges_to': [], 'group_id': 23}
+  cat /tmp/output.dot, will get something like below:
+	digraph G {
+	"Group 27 Pid 10537\ncp h2.txt h3.txt" [shape=box];
+	"Group 26 Pid 10536\ncp h1.txt h2.txt" [shape=box];
+	"Group 24 Pid 10534\ncp hello.txt h1.txt" [shape=box];
+	"Group 23 Pid 10533\nnano hello.txt" [shape=box];
+	"Group 26 Pid 10536\ncp h1.txt h2.txt" -> "Group 27 Pid 10537\ncp h2.txt h3.txt"  [color=green];
+	"Group 26 Pid 10536\ncp h1.txt h2.txt" -> "Group 27 Pid 10537\ncp h2.txt h3.txt"  [color=green];
+	"Group 24 Pid 10534\ncp hello.txt h1.txt" -> "Group 26 Pid 10536\ncp h1.txt h2.txt"  [color=green];
+	"Group 24 Pid 10534\ncp hello.txt h1.txt" -> "Group 26 Pid 10536\ncp h1.txt h2.txt"  [color=green];
+	"Group 23 Pid 10533\nnano hello.txt" -> "Group 24 Pid 10534\ncp hello.txt h1.txt"  [color=green];
+	"Group 23 Pid 10533\nnano hello.txt" -> "Group 24 Pid 10534\ncp hello.txt h1.txt"  [color=green];
+	} 
+  open browser and go to https://dreampuf.github.io/GraphvizOnline/ (copy content of .dot file will get graph)
+  
+  
