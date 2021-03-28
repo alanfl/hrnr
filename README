@@ -53,7 +53,7 @@ Setup kernel config for build:
 
 Build linux kernel:
 
-  sudo ./compile (rerun if failed)
+  sudo ./compile (be patient, may last 2 hours, rerun if failed)
   sudo make modules_install
   sudo make install
   sudo make headers_install INSTALL_HDR_PATH=$OMNIPLAY_DIR/test/replay_headers
