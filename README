@@ -114,7 +114,7 @@ To build the tools (no installation, depends on the headers_install when buildin
   cd ..
   make
 
-Add the following to ~/.profile file:
+Add the following to ~/.profile file: (.profile will be execed for ssh client, but NOT by GUI terminal)
 
   export LIBPATH=/lib/i386-linux-gnu:/usr/lib/i386-linux-gnu:/usr/local/lib:/usr/lib:/lib
   sudo -E $OMNIPLAY_DIR/scripts/insert_spec.sh (ONLY add this line at this point)
@@ -196,7 +196,7 @@ Demo & Validation
 -----------------------------------------------------------------
 
 Record userspace and kernel space non-deterministics:
-  From one terminal window
+  Open one ssh session
   cd $OMNIPLAY_DIR/test
   ./xreset.sh
   ./xrun.sh “/bin/bash” (all commands in the shell will be recorded)
@@ -208,7 +208,7 @@ Record userspace and kernel space non-deterministics:
   Output should be: Record log save to: /replay_logdb/rec-1
 
 Query file provenance:
-  Open another terminal (must be a different terminal window)
+  Open another ssh session (must be a different terminal window)
   cd $OMNIPLAY_DIR/test
   ./xquery.sh h3.txt
   Output should be: Query took 146.136988 sec
