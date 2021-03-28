@@ -171,19 +171,21 @@ Optional required if checked out latest from ddevec/omniplay:
 -----------------------------------------------------------------
 Build logdb & install sqlite3
 -----------------------------------------------------------------
-logdb has python scripts that use Pin to replay and interpret the linkage output:
 
-cd $OMNIPLAY_DIR/logdb
-sudo apt-get install python-dev sqlite3
-cd ../python_environ/omniplay
-make
-sudo make install (install parseklograw package)
+logdb has python scripts that automate querying file changes. It replay processes and use pin tools for taint tracking.
+
+	cd $OMNIPLAY_DIR/logdb
+	sudo apt-get install python-dev sqlite3
+	cd ../python_environ/omniplay
+	make
+	sudo make install (install parseklograw package)
 
 Validate logdb and sqlite3
+
 	After record something
 	python fill_db.py -s 1 
-sqlite3 /replay_logdb/replay.db
-sqlite> .tables (see all tables)
-sqlite> SELECT * FROM replays;
-Ctrl + d (exit sqlite3) 
+	sqlite3 /replay_logdb/replay.db
+	sqlite> .tables (see all tables)
+	sqlite> SELECT * FROM replays;
+	Ctrl + d (exit sqlite3) 
 
