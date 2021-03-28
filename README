@@ -71,3 +71,69 @@ Note the original linux version then reboot with new kernel:
 Note new linux kernel version:
 
   uname -r (3.5.7.13)
+  
+-----------------------------------------------------------------
+Build modified glibc
+-----------------------------------------------------------------
+
+Dependencies:
+
+  sudo apt-get install gawk texinfo autoconf gettext
+
+One-time configure:
+
+  cd $OMNIPLAY_DIR/eglibc-2.15/
+  mkdir build
+  mkdir prefix
+  cd build
+  LD_LIBRARY_PATH="" ../configure -prefix=$OMNIPLAY_DIR/eglibc-2.15/prefix --disable-profile --enable-add-on --without-gd --without-selinux --without-cvs --enable-kernel=3.2.0
+  sudo mkdir /var/db
+  sudo chown $USER /var/db
+  mkdir ../prefix/etc/
+  touch ../prefix/etc/ld.so.conf
+
+To build/install:
+
+  cd $OMNIPLAY_DIR/eglibc-2.15/build
+  LD_LIBRARY_PATH="" make
+  LD_LIBRARY_PATH="" make install
+
+Also, run some misc fixups (once):
+
+  LD_LIBRARY_PATH="" cd $OMNIPLAY_DIR/eglibc-2.15/prefix/lib
+  LD_LIBRARY_PATH="" ln -s /usr/lib/locale
+
+-----------------------------------------------------------------
+Building test tools
+-----------------------------------------------------------------
+
+To build the tools (no installation, depends on the headers_install when building kernel)
+  sudo apt-get install g++
+  cd $OMNIPLAY_DIR/test/dev
+  make
+  cd ..
+  make
+
+Add the following to ~/.profile file:
+
+  export LIBPATH=/lib/i386-linux-gnu:/usr/lib/i386-linux-gnu:/usr/local/lib:/usr/lib:/lib
+  sudo -E $OMNIPLAY_DIR/scripts/insert_spec.sh (ONLY add this line at this point)
+  
+-----------------------------------------------------------------
+Validate the build
+-----------------------------------------------------------------
+
+Reconnect all ssh clients.
+
+Record userspace and kernel space non-deterministics:
+  From one terminal window
+  cd $OMNIPLAY_DIR/test
+  ./xreset.sh
+  ./xrun.sh “/bin/nano hello.txt” (type something then exit)
+  Output should be: Record log save to: /replay_logdb/rec-1
+
+Replay previous recorded (it will NOT really rerun the program):
+  Open another terminal (must be a different terminal window)
+  cd $OMNIPLAY_DIR/test
+  ./xrerun.sh 1
+  Output should be: Goodby! Cruel lmap. This replay is over.
