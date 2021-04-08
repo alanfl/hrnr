@@ -13,7 +13,7 @@
 #define MAGIC_SIZE 1000000
 //#define FILE_REPLAY
 //#define CONVERT
-#define PRINT_DEBUG 0
+#define PRINT_DEBUG 1
 //#define INVISIABLE
 extern unsigned int convert_log;
 
